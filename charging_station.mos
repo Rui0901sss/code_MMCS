@@ -1,0 +1,162 @@
+model charging_station
+uses "mmxprs"
+uses "mmsheet"
+
+  declarations
+    number_of_T = 3 !number of charging point types
+    number_of_Y = 4 !number of year
+    number_of_I = 10 !number of charging location for each grid
+    number_of_J = 434 !number of total grids
+    number_of_N = 434 !number of total grids
+    number_of_U = 103 !number of grids which the demand is not always empty in four year
+    number_of_W = 22 !number of grids which have interesting points
+
+    T = 1..number_of_T
+    Y = 1..number_of_Y
+    I = 1..number_of_I
+    J = 1..number_of_J
+    N = 1..number_of_N
+    W = 1..number_of_W
+    U = 1..number_of_U
+    O = 1..number_of_J
+
+    M : real !big M
+    v : real !the maximum number of charging stations for the grid in city center
+    f : real !the fixed opening cost of each charging station
+    c : array(T) of real !the cost of establishing  a charging point
+    e : array(T) of real !the demand that each charging station T can satisfy
+
+
+    g : array(J) of real !the electricity of grid j can supply before the first year
+    p : array(J) of real !the maximum number of potention locations in grid j
+    d : array(Y,J) of real !the demand of grid j in year y
+    q : array(J) of list of integer !the list of neighbor of grid i
+    u : array(U) of integer ! the array of fixed grid
+    o : array(O) of integer !the array labeled the center grid and rear grid using 1 and 0
+    w : array(W) of integer !the grid list of intersting point
+
+    !variables
+    s:array(I,J,T,Y) of mpvar !the number of newly established charging station 𝑡 ∈ 𝑇 at the location 𝑖 ∈ 𝐼 in grid 𝑗∈𝐽 inyear 𝑦∈𝑌.
+    z:array(I,J,Y) of mpvar !z =1 if charging location on 𝑖 ∈ 𝐼 in grid j is newly opened in year y,o otherwise
+
+    x:array(J,N,Y) of mpvar ! the electricity that grid 𝑗∈𝐽 can get from grid 𝑏∈𝐺 inyear 𝑦 ∈𝑌
+    a:array(N,J,Y) of mpvar ! the electricity that grid 𝑏∈𝐺 supply to grid 𝑗∈𝐽 in year 𝑦∈𝑌.
+
+  end-declarations
+
+
+!**********************initialisation************************
+!initialise data from charge.dat
+initializations from "charge.dat"
+  c e f q M v w
+end-initializations
+
+!initialse data from .xlsx/.csv/ file
+initializations from "mmsheet.xlsx:Demand_data.xlsx"
+  p as 'noindex;[H2:H435]'
+end-initializations
+
+initializations from "mmsheet.csv:array.csv"
+  u as 'noindex;[B2:B104]'
+end-initializations
+
+initializations from "mmsheet.xlsx:d.xlsx"
+  d as 'noindex;[A2:PR5]'
+end-initializations
+
+initializations from "mmsheet.csv:g.csv"
+  g as 'noindex;[B2:B435]'
+end-initializations
+
+initializations from "mmsheet.csv:Near_city_centre.csv"
+  o as 'noindex;[B2:B435]'
+end-initializations
+
+
+!define z is a binary variable
+forall(i in I,j in J, y in Y)
+  z(i,j,y) is_binary
+
+!define s in an integer variable
+forall(i in I,j in J, t in T,y in Y)
+  s(i,j,t,y) is_integer
+
+
+!******************objective funtion*********************
+!Minimise the cost of opening a new charging location
+!and the total cost place another charging point at the same location
+total_cost := sum(i in I, j in J, t in T, y in Y)(z(i,j,y)*f + s(i,j,t,y)*c(t))
+
+
+!**********************constraint************************
+!The total number of charging locations in each grid after four years should be equal
+!or less than the number of potential charging locations
+forall(j in J)
+   sum(i in I,y in Y)z(i,j,y) <= p(j)
+
+
+!Stations can only be established where there is a charging location opened
+forall(i in I,j in J, y in Y)
+    sum(t in T, l in 1..y)s(i,j,t,l) <= 2*sum(l in 1..y)z(i,j,l)
+
+!control the number of charging location that near city centre
+!If the grid is in the city center, the total number of charging stations should be less than 15
+forall(j in J, y in Y)
+    sum(i in I,t in T, l in 1..y)s(i,j,t,l) <= v+(1-o(j))*M
+
+!point of interest
+!For grids with more than 2 points of interest, their demand is satisfied by themselves as much as possible:
+forall(j in W, y in Y)
+    d(y,w(j)) <= sum(i in I,t in T, l in 1..y)e(t)*s(i,w(j),t,l) +g(w(j))
+
+
+!The demand of each grid is satisfied by itself and its neighbors every year:
+forall(j in J,y in Y)
+    d(y,j) <= sum(b in q(j))x(j,b,y)
+
+!Define a variable to record the the electricity that grid 𝑏 ∈ 𝐺 supply to grid 𝑗 ∈ 𝐽 in year 𝑦 ∈ 𝑌:
+forall(j in J, b in N, y in Y)
+    a(b,j,y)=x(j,b,y)
+
+!Each grid should provide less power to its neighbors than the grid can supply:
+forall(j in J, y in Y)
+    sum(b in q(j))a(b,j,y) <= sum(i in I,t in T, l in 1..y)e(t)*s(i,j,t,l) +g(j)
+
+!There should be various charging types
+sum(i in I, j in U,y in Y)s(i,u(j),1,y) >= 1
+sum(i in I, j in U,y in Y)s(i,u(j),3,y) >= 1
+
+
+!**************************solve****************************
+  minimise(total_cost)
+
+
+!**********************write solution************************
+  writeln("Begin running model")
+
+  writeln("Minimum cost is "+getsol(getobjval))
+
+
+  ! forall(j in 1..434) do
+  !       if(sum(i in I, y in Y)getsol(z(i,j,y))>0 )then
+  !           write(string(j)+"_"+ ":" +sum(i in I, y in Y)getsol(z(i,j,y))+"    ")
+  !           writeln
+  !       end-if
+  !     end-do
+
+
+  forall(j in 1..434) do
+    forall(t in T)do
+      forall(y in Y)do
+        if(sum(i in I)getsol(s(i,j,t,y)) > 0 )then
+            write(string(j)+"-year"+string(y)+"_type"+string(t)+ ":" +sum(i in I)getsol(s(i,j,t,y))+"    ")
+            writeln
+        end-if
+      end-do
+    end-do
+  end-do
+
+
+
+  writeln("End running model")
+end-model
