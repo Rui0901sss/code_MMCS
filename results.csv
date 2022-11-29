@@ -1,0 +1,98 @@
+J,Year 1,Year 2,Year 3,Year 4
+61,,Slow=1,,
+75,,Slow=1,,
+76,Slow=1,,,
+77,,Slow=1,,
+88,,,Slow=1,
+89,,Slow=1,,
+90,,Slow=1,,
+91,,Slow=1,,
+101,,,Slow=1,
+102,,Slow=1,,
+103,,Slow=1,,
+104,,Fast=1,,
+105,,,Slow=1,
+106,,,Slow=1,
+107,,,Slow=1,
+115,,,Slow=1,
+116,,Slow=1,,
+117,,,Slow=1,
+119,Fast=2,Fast=2,,
+121,"Slow=1, Fast=2",,,
+121,,Fast=1,,
+129,,,Slow=1,
+134,"Slow=1, Fast=7",,,
+143,,,Slow=1,
+144,,Slow=1,,
+145,,Slow=1,,
+145,,,Slow=1,
+146,Fast=2,Slow=1,,Slow=1
+147,Rapid=1,,,
+148,,Rapid=1,,
+149,,Rapid=1,,
+156,,,,Slow=1
+157,,,Slow=1,
+160,Slow=2,Fast=1,,Slow=1
+161,Fast=1,Slow=3,,
+162,"Slow=1,Fast=2",,,
+162,,Slow=1,,
+164,,Slow=1,,
+171,,,"Slow=1, Fast=1",
+172,,"Slow=1, Fast=1",,
+175,,Fast=4,,
+176,Slow=1,Fast=2,,Slow=1
+177,Fast=1,,Slow=1,
+178,,Slow=1,,
+184,,"Slow=4,Fast=1",Slow=2,
+185,Fast=2,,Fast=4,Slow=2
+186,Fast=2,,Fast=3,Slow=3
+187,,Slow=1,Slow=1,
+187,,,Fast=2,
+188,,Fast=1,Slow=1,Slow=2
+189,Fast=4,,,
+191,,Fast=1,Slow=1,
+192,,,Slow=1,
+198,,Fast=2,Slow=2,Slow=3
+199,Fast=4,Slow=4,,"Slow=1, Fast=3"
+200,Fast=2,"Slow=2, Fast=2","Slow=1, Fast=1",Fast=3
+201,,Slow=4,"Slow=1, Fast=1",Slow=2
+202,,Slow=3,Fast=1,
+203,"Slow=1, Fast=1",Fast=1,,
+205,,Fast=1,,
+206,,,Slow=1,
+213,,"Slow=4, Fast=1","Slow=2, Fast=4",
+214,Fast=4,,Fast=6,Fast=1
+215,,"Slow=2, Fast=1",Slow=3,"Slow=1, Fast=1"
+216,Fast=2,Slow=1,,
+217,,,Slow=1,
+228,Fast=2,Slow=4,,
+229,,"Slow=3, Fast=1",,
+230,,Fast=1,,
+233,,,Slow=1,
+234,,,Slow=1,
+242,,Slow=2,,
+246,,,,Slow=1
+247,,,Slow=1,
+248,,Slow=1,,
+249,,Slow=1,,
+272,,,Slow=1,
+275,,Slow=1,,
+286,,Slow=1,,
+287,,Slow=1,,
+288,,Slow=1,,
+290,,Slow=1,,
+291,,Slow=1,,
+299,,Slow=1,,
+316,,Slow=1,,
+327,,,,Slow=1
+328,,,,Slow=1
+331,,,Slow=1,
+342,Fast=1,,,
+343,,,Slow=1,
+345,,,,Slow=1
+355,Fast=2,Slow=1,Slow=1,Slow=2
+356,,Rapid=1,,
+369,Fast=6,,Fast=1,
+382,Fast=2,Fast=2,,
+397,,,Slow=1,
+412,,,,Slow=1
